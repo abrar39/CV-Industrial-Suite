@@ -63,6 +63,7 @@ python3 app.py         # Linux/macOS
 | 01 | Personnel Detection | `modules/personnel.py` | Count & track people, zone density |
 | 02 | Health & Safety | `modules/safety.py` | Boundary, proximity & posture violations |
 | 03 | Vehicle & Plates | `modules/vehicle.py` | Vehicle detection + OCR plate reading |
+| 04 | Textile Defect QC | `modules/textile_qc.py` | Detect fabric defects |
 
 Each module exposes a single public function: `run(frame) -> (annotated_frame, result_dict)`
 
@@ -76,7 +77,7 @@ Each module exposes a single public function: `run(frame) -> (annotated_frame, r
 | POST | `/api/{module}/video` | Process video upload |
 | WS   | `/ws/{module}`        | Live camera WebSocket stream |
 
-`module` ∈ `{ personnel, safety, vehicle }`
+`module` ∈ `{ personnel, safety, vehicle, textile_qc }`
 
 ---
 

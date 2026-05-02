@@ -27,10 +27,14 @@ from fastapi import FastAPI, File, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+import subprocess
 
 import config
 from modules import REGISTRY
 from modules.base import encode_frame, decode_frame, aggregate_stats
+
+# Suppress the Windows ConnectionResetError noise from video streaming
+logging.getLogger("asyncio").setLevel(logging.CRITICAL)
 
 # ── Logging ────────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -66,6 +70,7 @@ async def startup_event() -> None:
     logger.info("=" * 55)
     from models import get_yolo, get_ocr
     get_yolo()   # warm up YOLO
+    get_yolo("textile_qc") # warm up textile QC model
     get_ocr()    # warm up EasyOCR (or mark as unavailable)
     logger.info("All models ready. Serving at http://localhost:8000")
 

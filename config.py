@@ -12,11 +12,13 @@ from pathlib import Path
 BASE_DIR    = Path(__file__).parent
 OUTPUT_DIR  = BASE_DIR / "static" / "outputs"
 MODEL_PATH  = "yolov8n.pt"   # auto-downloaded by ultralytics on first run
+QC_MODEL_PATH = "yolo_textile_custom.pt" # path to the custom textile QC model
 TEMP_DIR    = BASE_DIR / "static" / "temp"   # temporary files (e.g. uploaded videos)
 # ── Inference thresholds ───────────────────────────────────────────────────
 CONF_PERSONNEL  = 0.40   # minimum confidence for person detections
 CONF_SAFETY     = 0.40   # minimum confidence for safety module
 CONF_VEHICLE    = 0.35   # lower threshold to catch partially visible vehicles
+CONF_DEFECT     = 0.30   # minimum confidence for textile defect detections
 
 # ── Video processing ───────────────────────────────────────────────────────
 VIDEO_SKIP_FRAMES   = 2      # process every Nth frame (1 = all frames)

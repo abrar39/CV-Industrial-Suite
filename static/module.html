@@ -843,6 +843,7 @@ const MODULES = {
   personnel: { icon:'👥', name:'Personnel Detection',       badge:'MODULE 01', conf:'0.40' },
   safety:    { icon:'🦺', name:'Health & Safety',           badge:'MODULE 02', conf:'0.40' },
   vehicle:   { icon:'🚗', name:'Vehicle & Number Plates',   badge:'MODULE 03', conf:'0.35' },
+  textile_qc: { icon:'🧵', name:'Textile Quality Control',    badge:'MODULE 04', conf:'0.45' },
 };
 
 /* ── State ── */
@@ -1061,6 +1062,7 @@ function showVideo(url) {
   revealOutput();
   const img = document.getElementById('output-img');
   const vid = document.getElementById('output-video');
+
   img.style.display = 'none';
   vid.src           = url;
   vid.style.display = 'block';
@@ -1077,7 +1079,7 @@ function revealOutput() {
 /* ── Dashboard renderers ── */
 function renderDashboard(d) {
   if (!d) return;
-  const r = { personnel: renderPersonnel, safety: renderSafety, vehicle: renderVehicle };
+  const r = { personnel: renderPersonnel, safety: renderSafety, vehicle: renderVehicle, textile_qc: renderTextileQC };
   if (r[d.module]) r[d.module](d);
 }
 
@@ -1164,6 +1166,29 @@ function renderVehicle(d) {
   setQS(d.total_vehicles+'', d.plates_detected+'', d.ocr_active?'ON':'OFF', '1');
 }
 
+/* Textile QC */
+function renderTextileQC(d) {
+  hideAlert();
+  document.getElementById('table-heading').textContent = 'Detections';
+  setStatCards([
+    { v: d.total_defects,   l: 'Defects Detected', cls: '' },
+    { v: d.zone_density,    l: 'Zone Density',      cls: d.zone_density === 'HIGH' ? 'warn' : '' },
+    { v: d.high_confidence, l: 'High Conf (>70%)',  cls: 'info' },
+  ]);
+  document.getElementById('extras').innerHTML = '';
+  //setTableHead(['ID', 'Confidence', 'Width', 'Height']);
+  setTableHead(['ID', 'Label', 'Confidence', 'Width', 'Height']);
+  setTableRows((d.detections||[]).map(p => `
+    <tr>
+      <td><span class="badge cyan">D${String(p.id).padStart(2,'0')}</span></td>
+      <td>${p.label}</td>
+      <td>${(p.confidence*100).toFixed(1)}%</td>
+      <td>${p.width_px}px</td>
+      <td>${p.height_px}px</td>
+    </tr>`));
+  setQS(d.total_defects, d.high_confidence+'', d.zone_density, '1');
+}
+
 /* Video stats dashboard */
 function renderDashboardVideo(apiData) {
   const s = apiData.stats || {};
@@ -1196,6 +1221,23 @@ function renderDashboardVideo(apiData) {
     setQS('—', s.max_unsafe||'—', '—', s.frames||'—');
   } else if (MOD === 'vehicle') {
     const plates = s.unique_plates || [];
+    setStatCards([
+      { v: s.avg_vehicles||'—', l:'Avg Vehicles/Frame', cls:'' },
+      { v: plates.length,        l:'Unique Plates',      cls:'info' },
+      { v: s.frames||'—',        l:'Frames Processed',   cls:'' },
+    ]);
+    document.getElementById('extras').innerHTML = plates.length
+      ? `<div style="font-family:var(--font-mono);font-size:.58rem;color:var(--text-muted);letter-spacing:.12em;margin-bottom:6px;">UNIQUE PLATES (SESSION)</div>
+         <div class="plates-strip">${plates.map(p=>`<span class="plate-chip">${p}</span>`).join('')}</div>`
+      : '';
+    setTableHead(['Metric','Value']);
+    setTableRows([
+      ['Average vehicles / frame', s.avg_vehicles],
+      ['Maximum vehicles in frame', s.max_vehicles],
+      ['Unique plates detected', plates.join(', ') || 'None'],
+    ].map(r => `<tr>${r.map(c=>`<td>${c??'—'}</td>`).join('')}</tr>`));
+    setQS(s.avg_vehicles||'—', plates.length+'', '—', s.frames||'—');
+  } else if (MOD === 'textile_qc') {
     setStatCards([
       { v: s.avg_vehicles||'—', l:'Avg Vehicles/Frame', cls:'' },
       { v: plates.length,        l:'Unique Plates',      cls:'info' },
