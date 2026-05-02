@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV Industrial Suite — atomcamp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   ROOT — atomcamp brand palette
+═══════════════════════════════════════════════ */
+:root {
+  --ac-green:      #1E8A00;
+  --ac-bright:     #3AB700;
+  --ac-soft:       #E8F5E0;
+  --ac-black:      #1A1A1A;
+  --ac-gray:       #F4F4F4;
+  --ac-white:      #FFFFFF;
+
+  /* Dark theme surfaces */
+  --bg:            #0F1108;
+  --bg2:           #161A0E;
+  --bg3:           #1C2212;
+  --card:          #141A0D;
+  --border:        #2A3818;
+  --border2:       #3A5020;
+  --text:          #D4E8C0;
+  --text-dim:      #7A9860;
+  --text-muted:    #4A6035;
+
+  --font-head: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --radius:    8px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+::selection { background: rgba(30,138,0,0.3); color: var(--ac-bright); }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ── Animated grid background ── */
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(58,183,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(58,183,0,0.04) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+.bg-grid::after {
+  content:'';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 55% at 50% -5%, rgba(30,138,0,0.18) 0%, transparent 65%);
+}
+
+/* ═══════════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════════ */
+.navbar {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 56px;
+  height: 68px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(15,17,8,0.85);
+  backdrop-filter: blur(14px);
+}
+/* atomcamp logo pill */
+.ac-logo {
+  display: inline-flex; align-items: center;
+  background: var(--ac-green);
+  border-radius: 40px;
+  padding: 7px 20px;
+  text-decoration: none;
+  gap: 0;
+  box-shadow: 0 2px 16px rgba(30,138,0,0.35);
+}
+.ac-logo span { font-family: var(--font-head); color: #fff; font-size: 1rem; line-height:1; }
+.ac-logo .atom { font-weight: 400; }
+.ac-logo .camp { font-weight: 800; }
+
+.nav-right {
+  display: flex; align-items: center; gap: 24px;
+}
+.nav-tag {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+  padding: 5px 12px;
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+}
+.nav-pill {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--ac-bright);
+  box-shadow: 0 0 8px rgba(58,183,0,0.7);
+  animation: pulse 2.2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity:1; transform: scale(1); }
+  50%      { opacity:.6; transform: scale(0.85); }
+}
+
+/* ═══════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════ */
+.hero {
+  position: relative; z-index: 1;
+  text-align: center;
+  padding: 88px 24px 56px;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 6px 16px;
+  border: 1px solid rgba(58,183,0,0.35);
+  border-radius: 30px;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--ac-bright);
+  letter-spacing: 0.06em;
+  background: rgba(58,183,0,0.06);
+  margin-bottom: 32px;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ac-bright);
+}
+.hero-title {
+  font-family: var(--font-head);
+  font-size: clamp(2.8rem, 6.5vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ac-white);
+  margin-bottom: 8px;
+}
+.hero-title .green {
+  color: var(--ac-bright);
+  text-shadow: 0 0 40px rgba(58,183,0,0.45);
+}
+.hero-subtitle {
+  font-family: var(--font-head);
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+  margin-bottom: 18px;
+}
+.hero-desc {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  max-width: 540px;
+  margin: 0 auto 52px;
+  line-height: 1.75;
+}
+
+/* ── Stats bar ── */
+.stats-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 64px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--card);
+}
+.stats-bar-item {
+  flex: 1;
+  padding: 18px 12px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+.stats-bar-item:last-child { border-right: none; }
+.stats-val {
+  font-family: var(--font-head);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--ac-bright);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stats-lbl {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════
+   MODULE CARDS
+═══════════════════════════════════════════════ */
+.section-label {
+  position: relative; z-index: 1;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.section-label::before,
+.section-label::after {
+  content: '';
+  display: inline-block;
+  width: 40px; height: 1px;
+  background: var(--border2);
+  vertical-align: middle;
+  margin: 0 14px;
+}
+
+.cards-grid {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 40px 100px;
+}
+
+.module-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px 30px 30px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+  text-align: left;
+}
+/* Top accent line */
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ac-green), var(--ac-bright));
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.module-card:hover::before { opacity: 1; }
+.module-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(30,138,0,0.08);
+}
+
+/* Module number */
+.card-num {
+  position: absolute;
+  top: 20px; right: 24px;
+  font-family: var(--font-head);
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.14em;
+}
+
+/* Icon */
+.card-icon {
+  width: 60px; height: 60px;
+  border-radius: 12px;
+  background: rgba(30,138,0,0.08);
+  border: 1px solid rgba(30,138,0,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  margin-bottom: 24px;
+  transition: background 0.25s, border-color 0.25s;
+}
+.module-card:hover .card-icon {
+  background: rgba(30,138,0,0.15);
+  border-color: rgba(58,183,0,0.4);
+}
+
+/* Tag pill */
+.card-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(30,138,0,0.12);
+  border: 1px solid rgba(30,138,0,0.3);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--ac-bright);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.card-title {
+  font-family: var(--font-head);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.card-desc {
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  line-height: 1.75;
+  margin-bottom: 24px;
+}
+
+/* Feature list */
+.card-features {
+  list-style: none;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.card-features li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
+.card-features li::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ac-green);
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+/* CTA button */
+.card-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px;
+  background: var(--ac-green);
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-head);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.card-cta:hover {
+  background: var(--ac-bright);
+  box-shadow: 0 6px 24px rgba(30,138,0,0.4);
+  transform: scale(1.01);
+}
+.card-cta svg {
+  transition: transform 0.2s;
+}
+.module-card:hover .card-cta svg {
+  transform: translateX(4px);
+}
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════ */
+.site-footer {
+  position: relative; z-index: 1;
+  text-align: center;
+  padding: 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.footer-logo {
+  display: inline-flex; align-items: center;
+  background: var(--ac-green);
+  border-radius: 30px;
+  padding: 5px 14px;
+}
+.footer-logo span { font-family: var(--font-head); color: #fff; font-size: 0.82rem; }
+.footer-logo .atom { font-weight: 400; }
+.footer-logo .camp { font-weight: 800; }
+.footer-text {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .navbar { padding: 0 20px; }
+  .cards-grid { padding: 0 16px 60px; grid-template-columns: 1fr; }
+  .hero { padding: 56px 16px 36px; }
+  .stats-bar { max-width: 100%; margin-left: 16px; margin-right: 16px; }
+  .nav-tag, .nav-pill { display: none; }
+}
+
+/* ── Entry animation ── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: fadeUp 0.5s ease forwards;
+}
+@keyframes fadeUp {
+  to { opacity: 1; transform: none; }
+}
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.55s; }
+.delay-6 { animation-delay: 0.65s; }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="ac-logo" href="#">
+    <span class="atom">atom</span><span class="camp">camp</span>
+  </a>
+  <div class="nav-right">
+    <span class="nav-tag">CV Industrial Suite v2.0</span>
+    <div class="nav-pill">
+      <span class="status-dot"></span>
+      YOLOv8 Online
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow fade-up">Computer Vision · Manufacturing Intelligence</div>
+
+  <h1 class="hero-title fade-up delay-1">
+    Industrial<br><span class="green">CV Platform</span>
+  </h1>
+
+  <p class="hero-subtitle fade-up delay-2">Powered by YOLOv8 &amp; Deep Learning</p>
+
+  <p class="hero-desc fade-up delay-3">
+    Real-time AI inference for manufacturing and facilities.
+    Upload images, process video, or stream live camera — get instant detection results.
+  </p>
+
+  <!-- Stats bar -->
+  <div class="stats-bar fade-up delay-4">
+    <div class="stats-bar-item">
+      <div class="stats-val">3</div>
+      <div class="stats-lbl">CV Modules</div>
+    </div>
+    <div class="stats-bar-item">
+      <div class="stats-val">YOLOv8</div>
+      <div class="stats-lbl">Model</div>
+    </div>
+    <div class="stats-bar-item">
+      <div class="stats-val">Live</div>
+      <div class="stats-lbl">Camera Stream</div>
+    </div>
+    <div class="stats-bar-item">
+      <div class="stats-val">OCR</div>
+      <div class="stats-lbl">Plate Reading</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION LABEL -->
+<p class="section-label fade-up delay-4">Select a Module</p>
+
+<!-- MODULE CARDS -->
+<div class="cards-grid">
+
+  <!-- Card 1 — Personnel -->
+  <div class="module-card fade-up delay-4" onclick="location.href='module.html?mod=personnel'">
+    <span class="card-num">MODULE 01</span>
+    <div class="card-icon">👥</div>
+    <span class="card-tag">People Tracking</span>
+    <h2 class="card-title">Personnel<br>Detection</h2>
+    <p class="card-desc">
+      Real-time counting and tracking of personnel across manufacturing zones.
+      Monitor headcount, zone density, and spatial distribution instantly.
+    </p>
+    <ul class="card-features">
+      <li>Live people counter with sequential ID badges</li>
+      <li>Zone density — HIGH / MEDIUM / LOW classification</li>
+      <li>Per-detection confidence scoring & bbox overlay</li>
+      <li>Supports image, video, and live camera input</li>
+    </ul>
+    <button class="card-cta">
+      Open Module
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Card 2 — Safety -->
+  <div class="module-card fade-up delay-5" onclick="location.href='module.html?mod=safety'">
+    <span class="card-num">MODULE 02</span>
+    <div class="card-icon">🦺</div>
+    <span class="card-tag">Compliance Monitoring</span>
+    <h2 class="card-title">Health &amp;<br>Safety</h2>
+    <p class="card-desc">
+      Automated safety compliance detection. Identify boundary violations,
+      proximity risks, and posture anomalies in real time.
+    </p>
+    <ul class="card-features">
+      <li>Restricted zone boundary enforcement</li>
+      <li>Worker proximity alert (&lt; 80 px center-to-center)</li>
+      <li>Posture anomaly — possible fall detection</li>
+      <li>CRITICAL / WARNING / ALL CLEAR alert levels</li>
+    </ul>
+    <button class="card-cta">
+      Open Module
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Card 3 — Vehicle -->
+  <div class="module-card fade-up delay-6" onclick="location.href='module.html?mod=vehicle'">
+    <span class="card-num">MODULE 03</span>
+    <div class="card-icon">🚗</div>
+    <span class="card-tag">Vehicle Tracking + OCR</span>
+    <h2 class="card-title">Vehicle &amp;<br>Number Plates</h2>
+    <p class="card-desc">
+      Detect vehicles in facility areas and extract license plate numbers
+      via EasyOCR. Track vehicle type counts and unique plates per session.
+    </p>
+    <ul class="card-features">
+      <li>Multi-class detection: Car, Truck, Bus, Motorcycle</li>
+      <li>EasyOCR number plate text extraction</li>
+      <li>Unique plate log per video processing session</li>
+      <li>Vehicle type breakdown dashboard</li>
+    </ul>
+    <button class="card-cta">
+      Open Module
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-logo">
+    <span class="atom">atom</span><span class="camp">camp</span>
+  </div>
+  <span class="footer-text">CV Industrial Suite · YOLOv8 · EasyOCR · FastAPI</span>
+  <span class="footer-text">atomcamp.com</span>
+</footer>
+
+</body>
+</html>

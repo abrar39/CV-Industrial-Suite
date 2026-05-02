@@ -1,0 +1,17 @@
+# CV Industrial Suite v2 — Requirements
+# Python 3.9+  |  Run: pip install -r requirements.txt
+
+# ── Web framework ──────────────────────────────────
+fastapi
+uvicorn[standard]
+python-multipart
+
+# ── Computer vision ────────────────────────────────
+ultralytics
+opencv-python
+numpy
+Pillow
+
+# ── OCR (number plates) ────────────────────────────
+# Unpinned — pip will resolve a compatible version
+easyocr
