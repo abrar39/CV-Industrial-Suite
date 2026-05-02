@@ -55,6 +55,7 @@ app.add_middleware(
 
 # Ensure output directory exists
 config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+config.TEMP_DIR.mkdir(parents=True, exist_ok=True) # to hold temporary files
 
 
 # ── Startup: pre-load models ───────────────────────────────────────────────
@@ -107,12 +108,16 @@ async def infer_video(module: str, file: UploadFile = File(...)):
         return JSONResponse({"error": f"Unknown module '{module}'"}, status_code=400)
 
     raw      = await file.read()
-    in_path  = f"/tmp/cv_in_{uuid.uuid4().hex}.mp4"
+    #in_path  = f"/tmp/cv_in_{uuid.uuid4().hex}.mp4"
+    in_name = f"cv_in_{uuid.uuid4().hex}.mp4"
+    in_path = str(config.TEMP_DIR / in_name) # works on windows as well
     out_name = f"cv_out_{uuid.uuid4().hex}.mp4"
     out_path = str(config.OUTPUT_DIR / out_name)
 
     with open(in_path, "wb") as f:
         f.write(raw)
+        f.flush() # force the os to write buffer to disk
+        os.fsync(f.fileno()) # ensure data is fully written before processing
 
     try:
         all_data, total_frames = _process_video(in_path, out_path, module)

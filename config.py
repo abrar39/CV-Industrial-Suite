@@ -12,7 +12,7 @@ from pathlib import Path
 BASE_DIR    = Path(__file__).parent
 OUTPUT_DIR  = BASE_DIR / "static" / "outputs"
 MODEL_PATH  = "yolov8n.pt"   # auto-downloaded by ultralytics on first run
-
+TEMP_DIR    = BASE_DIR / "static" / "temp"   # temporary files (e.g. uploaded videos)
 # ── Inference thresholds ───────────────────────────────────────────────────
 CONF_PERSONNEL  = 0.40   # minimum confidence for person detections
 CONF_SAFETY     = 0.40   # minimum confidence for safety module
