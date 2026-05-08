@@ -1192,68 +1192,72 @@ function renderTextileQC(d) {
 /* Video stats dashboard */
 function renderDashboardVideo(apiData) {
   const s = apiData.stats || {};
+  const jsonBtn = apiData.json_url ? `<a href="${apiData.json_url}" target="_blank" style="display:inline-block; margin-bottom:14px; padding:6px 12px; background:var(--ac-green); color:#fff; text-decoration:none; border-radius:4px; font-size:0.75rem; font-weight:600;">Download JSON (Confidences)</a>` : '';
+  
   if (MOD === 'personnel') {
     setStatCards([
       { v: s.avg||'—', l:'Avg Persons/Frame', cls:'' },
-      { v: s.max||'—', l:'Max Persons',       cls:'' },
-      { v: s.frames||'—', l:'Frames',         cls:'info' },
+      { v: s.total_unique||0, l:'Total Unique Persons', cls:'info' },
+      { v: s.frames||'—', l:'Frames',         cls:'' },
     ]);
+    document.getElementById('extras').innerHTML = jsonBtn;
     setTableHead(['Metric','Value']);
     setTableRows([
       ['Average persons / frame', s.avg],
       ['Maximum persons in frame', s.max],
       ['Minimum persons in frame', s.min],
+      ['Total unique persons in video', s.total_unique],
       ['Total frames processed', s.frames],
     ].map(r => `<tr>${r.map(c=>`<td>${c??'—'}</td>`).join('')}</tr>`));
-    setQS(s.avg||'—', s.max||'—', '—', s.frames||'—');
+    setQS(s.avg||'—', s.total_unique||'—', '—', s.frames||'—');
   } else if (MOD === 'safety') {
     setStatCards([
       { v: s.alert_frames||0,  l:'Alert Frames',    cls:'danger' },
       { v: s.max_unsafe||0,    l:'Max Unsafe',       cls:'warn' },
-      { v: s.frames||'—',      l:'Frames Processed', cls:'info' },
+      { v: s.total_unique||0,  l:'Total Unique Persons', cls:'info' },
     ]);
+    document.getElementById('extras').innerHTML = jsonBtn;
     setTableHead(['Metric','Value']);
     setTableRows([
       ['Frames with violations', s.alert_frames],
       ['Max unsafe in one frame', s.max_unsafe],
+      ['Total unique persons in video', s.total_unique],
       ['Total frames processed', s.frames],
     ].map(r => `<tr>${r.map(c=>`<td>${c??'—'}</td>`).join('')}</tr>`));
-    setQS('—', s.max_unsafe||'—', '—', s.frames||'—');
+    setQS('—', s.total_unique||'—', '—', s.frames||'—');
   } else if (MOD === 'vehicle') {
     const plates = s.unique_plates || [];
     setStatCards([
       { v: s.avg_vehicles||'—', l:'Avg Vehicles/Frame', cls:'' },
-      { v: plates.length,        l:'Unique Plates',      cls:'info' },
+      { v: s.total_unique||0,   l:'Total Unique Vehicles', cls:'info' },
       { v: s.frames||'—',        l:'Frames Processed',   cls:'' },
     ]);
-    document.getElementById('extras').innerHTML = plates.length
+    document.getElementById('extras').innerHTML = (jsonBtn ? jsonBtn + '<br>' : '') + (plates.length
       ? `<div style="font-family:var(--font-mono);font-size:.58rem;color:var(--text-muted);letter-spacing:.12em;margin-bottom:6px;">UNIQUE PLATES (SESSION)</div>
          <div class="plates-strip">${plates.map(p=>`<span class="plate-chip">${p}</span>`).join('')}</div>`
-      : '';
+      : '');
     setTableHead(['Metric','Value']);
     setTableRows([
       ['Average vehicles / frame', s.avg_vehicles],
       ['Maximum vehicles in frame', s.max_vehicles],
+      ['Total unique vehicles in video', s.total_unique],
       ['Unique plates detected', plates.join(', ') || 'None'],
     ].map(r => `<tr>${r.map(c=>`<td>${c??'—'}</td>`).join('')}</tr>`));
-    setQS(s.avg_vehicles||'—', plates.length+'', '—', s.frames||'—');
+    setQS(s.avg_vehicles||'—', s.total_unique||'—', '—', s.frames||'—');
   } else if (MOD === 'textile_qc') {
     setStatCards([
-      { v: s.avg_vehicles||'—', l:'Avg Vehicles/Frame', cls:'' },
-      { v: plates.length,        l:'Unique Plates',      cls:'info' },
+      { v: s.avg_defects||'—', l:'Avg Defects/Frame', cls:'' },
+      { v: s.total_unique||0,    l:'Total Unique Defects', cls:'info' },
       { v: s.frames||'—',        l:'Frames Processed',   cls:'' },
     ]);
-    document.getElementById('extras').innerHTML = plates.length
-      ? `<div style="font-family:var(--font-mono);font-size:.58rem;color:var(--text-muted);letter-spacing:.12em;margin-bottom:6px;">UNIQUE PLATES (SESSION)</div>
-         <div class="plates-strip">${plates.map(p=>`<span class="plate-chip">${p}</span>`).join('')}</div>`
-      : '';
+    document.getElementById('extras').innerHTML = jsonBtn;
     setTableHead(['Metric','Value']);
     setTableRows([
-      ['Average vehicles / frame', s.avg_vehicles],
-      ['Maximum vehicles in frame', s.max_vehicles],
-      ['Unique plates detected', plates.join(', ') || 'None'],
+      ['Average defects / frame', s.avg_defects],
+      ['Maximum defects in frame', s.max_defects],
+      ['Total unique defects in video', s.total_unique],
     ].map(r => `<tr>${r.map(c=>`<td>${c??'—'}</td>`).join('')}</tr>`));
-    setQS(s.avg_vehicles||'—', plates.length+'', '—', s.frames||'—');
+    setQS(s.avg_defects||'—', s.total_unique||'—', '—', s.frames||'—');
   }
 }
 

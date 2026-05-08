@@ -52,7 +52,7 @@ def run(frame: np.ndarray) -> tuple[np.ndarray, dict]:
     result    : dict        structured detection data for the dashboard
     """
     model     = get_yolo()
-    results   = model(frame, conf=config.CONF_SAFETY, verbose=False)[0]
+    results   = model.track(frame, conf=config.CONF_SAFETY, persist=True, verbose=False)[0]
     h_img, w_img = frame.shape[:2]
     annotated = frame.copy()
 
@@ -64,7 +64,9 @@ def run(frame: np.ndarray) -> tuple[np.ndarray, dict]:
         conf = float(box.conf[0])
         x1, y1, x2, y2 = map(int, box.xyxy[0])
         bw, bh = x2 - x1, y2 - y1
+        tid = int(box.id[0]) if box.id is not None else len(raw_persons) + 1
         raw_persons.append({
+            "id":   tid,
             "conf": conf,
             "bbox": [x1, y1, x2, y2],
             "cx":   (x1 + x2) // 2,
@@ -110,6 +112,7 @@ def run(frame: np.ndarray) -> tuple[np.ndarray, dict]:
             safe_count += 1
 
         detections.append({
+            "id":         person["id"],
             "status":     "safe" if is_safe else "unsafe",
             "confidence": round(person["conf"], 3),
             "bbox":       person["bbox"],

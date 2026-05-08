@@ -142,6 +142,13 @@ def aggregate_stats(module: str, frames_data: list[dict]) -> dict:
     if not frames_data:
         return {}
 
+    all_ids = set()
+    for d in frames_data:
+        for det in d.get("detections", []):
+            if "id" in det:
+                all_ids.add(det["id"])
+    total_unique = len(all_ids)
+
     if module == "personnel":
         counts = [d.get("total_persons", 0) for d in frames_data]
         return {
@@ -149,6 +156,7 @@ def aggregate_stats(module: str, frames_data: list[dict]) -> dict:
             "max":    max(counts),
             "min":    min(counts),
             "frames": len(frames_data),
+            "total_unique": total_unique,
         }
 
     if module == "safety":
@@ -158,6 +166,7 @@ def aggregate_stats(module: str, frames_data: list[dict]) -> dict:
             "max_unsafe":             max(unsafe),
             "alert_frames":           sum(1 for u in unsafe if u > 0),
             "frames":                 len(frames_data),
+            "total_unique":           total_unique,
         }
 
     if module == "vehicle":
@@ -170,6 +179,16 @@ def aggregate_stats(module: str, frames_data: list[dict]) -> dict:
             "max_vehicles":  max(counts),
             "unique_plates": sorted(all_plates),
             "frames":        len(frames_data),
+            "total_unique":  total_unique,
+        }
+
+    if module == "textile_qc":
+        counts = [d.get("total_defects", 0) for d in frames_data]
+        return {
+            "avg_defects":   round(sum(counts) / len(counts), 1),
+            "max_defects":   max(counts),
+            "frames":        len(frames_data),
+            "total_unique":  total_unique,
         }
 
     return {}
