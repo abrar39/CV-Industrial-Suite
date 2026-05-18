@@ -12,13 +12,14 @@ import logging
 from typing import Optional
 
 from ultralytics import YOLO
-from config import MODEL_PATH, QC_MODEL_PATH
+from config import MODEL_PATH, QC_MODEL_PATH, MOTOR_PDM_THERMAL_MODEL_PATH
 
 logger = logging.getLogger(__name__)
 
 # ── Internal singletons (never import directly) ────────────────────────────
 _yolo_model = None
 _yolo_textile_qc_model = None
+_yolo_motor_pdm_thermal = None
 _ocr_reader  = None
 _ocr_available: Optional[bool] = None
 
@@ -31,7 +32,7 @@ def get_yolo(task: str = "generic") -> object:
                 "generic" loads the base model (yolov8n.pt) which can be used for all tasks.
                 "textile_qc" loads a custom-trained model optimized for textile quality control.
     """
-    global _yolo_model, _yolo_textile_qc_model
+    global _yolo_model, _yolo_textile_qc_model, _yolo_motor_pdm_thermal
 
     if task == "textile_qc":
         if _yolo_textile_qc_model is None:
@@ -39,6 +40,13 @@ def get_yolo(task: str = "generic") -> object:
             _yolo_textile_qc_model = YOLO(QC_MODEL_PATH)
             logger.info("YOLOv8 Textile QC model loaded ✓")
         return _yolo_textile_qc_model
+    elif task == "motor_pdm_thermal":
+        # Classification model for motor PDM thermal images
+        if _yolo_motor_pdm_thermal is None:
+            logger.info("Loading YOLOv8 model for Motor PDM Thermal: %s", MOTOR_PDM_THERMAL_MODEL_PATH)
+            _yolo_motor_pdm_thermal = YOLO(MOTOR_PDM_THERMAL_MODEL_PATH)
+            logger.info("YOLOv8 Motor PDM Thermal model loaded ✓")
+        return _yolo_motor_pdm_thermal
     else:
         if _yolo_model is None:
             logger.info("Loading YOLOv8 model: %s", MODEL_PATH)

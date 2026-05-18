@@ -71,6 +71,7 @@ async def startup_event() -> None:
     from models import get_yolo, get_ocr
     get_yolo()   # warm up YOLO
     get_yolo("textile_qc") # warm up textile QC model
+    get_yolo("motor_pdm_thermal") # warm up motor PDM thermal model
     get_ocr()    # warm up EasyOCR (or mark as unavailable)
     logger.info("All models ready. Serving at http://localhost:8000")
 

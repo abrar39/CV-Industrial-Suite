@@ -844,6 +844,7 @@ const MODULES = {
   safety:    { icon:'🦺', name:'Health & Safety',           badge:'MODULE 02', conf:'0.40' },
   vehicle:   { icon:'🚗', name:'Vehicle & Number Plates',   badge:'MODULE 03', conf:'0.35' },
   textile_qc: { icon:'🧵', name:'Textile Quality Control',    badge:'MODULE 04', conf:'0.45' },
+  motor_pdm_thermal: { icon:'🔥', name:'Motor PDM Thermal Analysis', badge:'MODULE 05', conf:'0.40'}
 };
 
 /* ── State ── */
@@ -1168,6 +1169,29 @@ function renderVehicle(d) {
 
 /* Textile QC */
 function renderTextileQC(d) {
+  hideAlert();
+  document.getElementById('table-heading').textContent = 'Detections';
+  setStatCards([
+    { v: d.total_defects,   l: 'Defects Detected', cls: '' },
+    { v: d.zone_density,    l: 'Zone Density',      cls: d.zone_density === 'HIGH' ? 'warn' : '' },
+    { v: d.high_confidence, l: 'High Conf (>70%)',  cls: 'info' },
+  ]);
+  document.getElementById('extras').innerHTML = '';
+  //setTableHead(['ID', 'Confidence', 'Width', 'Height']);
+  setTableHead(['ID', 'Label', 'Confidence', 'Width', 'Height']);
+  setTableRows((d.detections||[]).map(p => `
+    <tr>
+      <td><span class="badge cyan">D${String(p.id).padStart(2,'0')}</span></td>
+      <td>${p.label}</td>
+      <td>${(p.confidence*100).toFixed(1)}%</td>
+      <td>${p.width_px}px</td>
+      <td>${p.height_px}px</td>
+    </tr>`));
+  setQS(d.total_defects, d.high_confidence+'', d.zone_density, '1');
+}
+
+/* Motor PDM Thermal */
+function renderMotorPDMThermal(d) {
   hideAlert();
   document.getElementById('table-heading').textContent = 'Detections';
   setStatCards([

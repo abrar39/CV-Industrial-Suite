@@ -13,12 +13,14 @@ BASE_DIR    = Path(__file__).parent
 OUTPUT_DIR  = BASE_DIR / "static" / "outputs"
 MODEL_PATH  = "yolov8n.pt"   # auto-downloaded by ultralytics on first run
 QC_MODEL_PATH = "yolo_textile_custom.pt" # path to the custom textile QC model
+MOTOR_PDM_THERMAL_MODEL_PATH = "yolo26l-cls_thermal_motor.pt" # path to the custom motor PDM thermal model
 TEMP_DIR    = BASE_DIR / "static" / "temp"   # temporary files (e.g. uploaded videos)
 # ── Inference thresholds ───────────────────────────────────────────────────
 CONF_PERSONNEL  = 0.40   # minimum confidence for person detections
 CONF_SAFETY     = 0.40   # minimum confidence for safety module
 CONF_VEHICLE    = 0.35   # lower threshold to catch partially visible vehicles
 CONF_DEFECT     = 0.30   # minimum confidence for textile defect detections
+CONF_MOTOR_PDM_THERMAL = 0.30 # minimum confidence for motor PDM thermal detections
 
 # ── Video processing ───────────────────────────────────────────────────────
 VIDEO_SKIP_FRAMES   = 2      # process every Nth frame (1 = all frames)
