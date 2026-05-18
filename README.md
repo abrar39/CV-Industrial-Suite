@@ -19,7 +19,8 @@ cv_suite_v2/
 │   ├── base.py          ← Shared drawing & encode/decode utils
 │   ├── personnel.py     ← Module 01: Personnel Detection
 │   ├── safety.py        ← Module 02: Health & Safety
-│   └── vehicle.py       ← Module 03: Vehicle & Number Plates
+│   ├── vehicle.py       ← Module 03: Vehicle & Number Plates
+|   └── textile_qc.py    ← Module 04: Textile Quality Control
 │
 ├── static/
 │   ├── index.html       ← Landing page (atomcamp branded)
