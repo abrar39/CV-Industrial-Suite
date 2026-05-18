@@ -51,7 +51,7 @@ def run(frame: np.ndarray) -> tuple[np.ndarray, dict]:
     """
     model              = get_yolo()
     ocr_reader, ocr_ok = get_ocr()
-    results            = model(frame, conf=config.CONF_VEHICLE, verbose=False)[0]
+    results            = model.track(frame, conf=config.CONF_VEHICLE, persist=True, verbose=False)[0]
     annotated          = frame.copy()
     detections: list[dict] = []
     vid                = 0
@@ -62,6 +62,7 @@ def run(frame: np.ndarray) -> tuple[np.ndarray, dict]:
             continue
 
         vid  += 1
+        tid   = int(box.id[0]) if box.id is not None else vid
         conf  = float(box.conf[0])
         x1, y1, x2, y2 = map(int, box.xyxy[0])
         bh     = y2 - y1
@@ -69,7 +70,7 @@ def run(frame: np.ndarray) -> tuple[np.ndarray, dict]:
 
         # Vehicle bounding box
         draw_box(annotated, x1, y1, x2, y2, config.COLOR_VEHICLE)
-        draw_label(annotated, f"{vtype} #{vid}  {conf:.0%}", x1, y1, config.COLOR_VEHICLE)
+        draw_label(annotated, f"{vtype} #{tid}  {conf:.0%}", x1, y1, config.COLOR_VEHICLE)
 
         # Plate region: bottom 32% of vehicle bbox
         plate_y1   = y2 - int(bh * 0.32)
@@ -83,7 +84,7 @@ def run(frame: np.ndarray) -> tuple[np.ndarray, dict]:
             _draw_plate_label(annotated, plate_text, x1, y2)
 
         detections.append({
-            "id":               vid,
+            "id":               tid,
             "type":             vtype,
             "confidence":       round(conf, 3),
             "bbox":             [x1, y1, x2, y2],

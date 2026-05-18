@@ -130,6 +130,11 @@ async def infer_video(module: str, file: UploadFile = File(...)):
         if os.path.exists(in_path):
             os.unlink(in_path)
 
+    json_name = out_name.replace('.mp4', '.json')
+    json_path = str(config.OUTPUT_DIR / json_name)
+    with open(json_path, "w") as f:
+        json.dump(all_data, f)
+
     stats = aggregate_stats(module, all_data)
     logger.info(
         "VIDEO  module=%s  total=%d  processed=%d",
@@ -139,6 +144,7 @@ async def infer_video(module: str, file: UploadFile = File(...)):
     return JSONResponse({
         "success":          True,
         "video_url":        f"/outputs/{out_name}",
+        "json_url":         f"/outputs/{json_name}",
         "stats":            stats,
         "total_frames":     total_frames,
         "processed_frames": len(all_data),
@@ -219,8 +225,9 @@ def _process_video(
     W   = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     H   = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    writer = cv2.VideoWriter(out_path, fourcc, fps, (W, H))
+    temp_out = out_path + ".temp.mp4"
+    fourcc = cv2.VideoWriter_fourcc(*"avc1")
+    writer = cv2.VideoWriter(temp_out, fourcc, fps, (W, H))
 
     all_data: list[dict] = []
     fnum = 0
@@ -242,6 +249,15 @@ def _process_video(
     finally:
         cap.release()
         writer.release()
+        
+    # Re-encode with ffmpeg if available, otherwise just rename
+    try:
+        subprocess.run(["ffmpeg", "-y", "-i", temp_out, "-vcodec", "libx264", "-f", "mp4", out_path], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        os.unlink(temp_out)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        if os.path.exists(out_path):
+            os.unlink(out_path)
+        os.rename(temp_out, out_path)
 
     return all_data, fnum
 

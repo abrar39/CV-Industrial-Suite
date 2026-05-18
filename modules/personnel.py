@@ -39,7 +39,7 @@ def run(frame: np.ndarray) -> tuple[np.ndarray, dict]:
     result    : dict        structured detection data for the dashboard
     """
     model      = get_yolo()
-    results    = model(frame, conf=config.CONF_PERSONNEL, verbose=False)[0]
+    results    = model.track(frame, conf=config.CONF_PERSONNEL, persist=True, verbose=False)[0]
     annotated  = frame.copy()
     detections = []
     pid        = 0
@@ -49,6 +49,7 @@ def run(frame: np.ndarray) -> tuple[np.ndarray, dict]:
             continue
 
         pid  += 1
+        tid   = int(box.id[0]) if box.id is not None else pid
         conf  = float(box.conf[0])
         x1, y1, x2, y2 = map(int, box.xyxy[0])
         bw, bh = x2 - x1, y2 - y1
@@ -61,10 +62,10 @@ def run(frame: np.ndarray) -> tuple[np.ndarray, dict]:
 
         # ID badge circle at top-center of box
         cx = x1 + bw // 2
-        draw_circle_id(annotated, f"P{pid:02d}", cx, y1 - 14, config.COLOR_BRIGHT)
+        draw_circle_id(annotated, f"P{tid:02d}", cx, y1 - 14, config.COLOR_BRIGHT)
 
         detections.append({
-            "id":         pid,
+            "id":         tid,
             "confidence": round(conf, 3),
             "bbox":       [x1, y1, x2, y2],
             "width_px":   bw,
